@@ -50,4 +50,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: src-tauri/gen/android/app/build/outputs/apk/debug/app-debug.apk
+          # 使用通配符 **/*.apk，让它自动在 android 目录下搜寻所有生成的 apk
+          path: src-tauri/gen/android/**/*.apk
