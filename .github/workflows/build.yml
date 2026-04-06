@@ -18,7 +18,8 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android, armv7-linux-androideabi, i686-linux-android, x86_64-linux-android
+          # 重点 1：只安装 arm64 架构，加快编译速度
+          targets: aarch64-linux-android
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -36,19 +37,20 @@ jobs:
         run: npm install
 
       - name: Tauri Android Init
-        # 去掉 --yes，改用 printf 直接喂入回车来跳过交互提示
+        # 如果你本地已经生成过 gen 文件夹并提交了，这步甚至可以省略
         run: printf '\n\n\n\n' | npx tauri android init
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
 
-      - name: Build Android Debug APK
-        run: npx tauri android build --debug
+      - name: Build Android Release APK
+        # 重点 2：改用 --release，并指定 --target 为 aarch64 (即 arm64-v8a)
+        run: npx tauri android build --release --target aarch64
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          # 使用通配符 **/*.apk，让它自动在 android 目录下搜寻所有生成的 apk
-          path: src-tauri/gen/android/**/*.apk
+          name: app-release-arm64
+          # 重点 3：输出路径会变为 release 文件夹下
+          path: src-tauri/gen/android/app/build/outputs/apk/release/*.apk

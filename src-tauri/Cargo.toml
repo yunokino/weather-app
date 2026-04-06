@@ -23,3 +23,10 @@ tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
+# 在文件末尾添加
+[profile.release]
+panic = "abort"   # 减小异常处理开销
+codegen-units = 1 # 增强优化程度
+lto = true        # 启用全程序链接优化
+opt-level = "s"   # 优先优化体积 (也可以用 "z")
+strip = true      # 移除所有调试符号 (非常关键！)
