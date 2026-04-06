@@ -36,7 +36,8 @@ jobs:
         run: npm install
 
       - name: Tauri Android Init
-        run: npx tauri android init --yes
+        # 去掉 --yes，改用 printf 直接喂入回车来跳过交互提示
+        run: printf '\n\n\n\n' | npx tauri android init
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
 
