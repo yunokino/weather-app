@@ -1,43 +1,52 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/src/styles.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri App</title>
-    <script type="module" src="/src/main.ts" defer></script>
-  </head>
+<!DOCTYPE html>
+<html lang="zh-CN">
 
-  <body>
-    <main class="container">
-      <h1>Welcome to Tauri</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Desktop</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
 
-      <div class="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/src/assets/vite.svg" class="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img
-            src="/src/assets/tauri.svg"
-            class="logo tauri"
-            alt="Tauri logo"
-          />
-        </a>
-        <a href="https://www.typescriptlang.org/docs" target="_blank">
-          <img
-            src="/src/assets/typescript.svg"
-            class="logo typescript"
-            alt="typescript logo"
-          />
-        </a>
+<body>
+  <div id="app" class="weather-theme-sunny">
+    <!-- 搜索区域 -->
+    <header class="search-section">
+      <div class="input-wrapper">
+        <input id="city-input" type="text" placeholder="搜索城市..." spellcheck="false" />
+        <span class="search-hint">Enter 查询</span>
       </div>
-      <p>Click on the Tauri logo to learn more about the framework</p>
+    </header>
 
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-      <p id="greet-msg"></p>
+    <!-- 主显示区域 -->
+    <main id="weather-display">
+      <div class="main-info">
+        <div class="top-row">
+          <div class="location">
+            <h1 class="city-name">--</h1>
+            <div class="subline">--</div>
+          </div>
+          <div class="current-weather">
+            <div class="temp-val">--</div>
+            <div class="weather-icon" id="weather-icon"></div>
+          </div>
+        </div>
+
+        <div class="desc-text">--</div>
+      </div>
+
+      <section class="hourly-section">
+        <div class="hourly-scroll" id="hourly"></div>
+      </section>
+
+      <div class="grid-details" id="details">
+        <!-- cards populated by JS -->
+      </div>
+
+      <div class="placeholder-msg" id="placeholder">输入城市开始探索</div>
     </main>
-  </body>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
