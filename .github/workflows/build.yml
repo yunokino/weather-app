@@ -18,7 +18,6 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          # 重点 1：只安装 arm64 架构，加快编译速度
           targets: aarch64-linux-android
 
       - name: Setup Java
@@ -37,20 +36,31 @@ jobs:
         run: npm install
 
       - name: Tauri Android Init
-        # 如果你本地已经生成过 gen 文件夹并提交了，这步甚至可以省略
         run: printf '\n\n\n\n' | npx tauri android init
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
 
       - name: Build Android Release APK
-        # 重点 2：改用 --release，并指定 --target 为 aarch64 (即 arm64-v8a)
         run: npx tauri android build --target aarch64
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/26.1.10909125
 
+      # 重点更改 1：搜索并列出所有生成的 APK 文件，方便在日志中排查位置
+      - name: Find APKs
+        run: |
+          echo "Listing all APK files found in the project:"
+          find . -name "*.apk"
+          # 将找到的第一个 APK 路径存入环境变量，备用
+          echo "APK_PATH=$(find src-tauri/gen/android -name "*.apk" | head -n 1)" >> $GITHUB_ENV
+
+      # 重点更改 2：使用更宽泛的路径匹配，或者使用上一步找到的具体路径
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release-arm64
-          # 重点 3：输出路径会变为 release 文件夹下
-          path: src-tauri/gen/android/app/build/outputs/apk/release/*.apk
+          # 使用递归通配符 ** 搜索所有可能的 apk 路径
+          # 这能解决 Gradle 目录结构与预期不符的问题（例如在 debug/release 或不同 abi 目录下）
+          path: |
+            src-tauri/gen/android/**/*.apk
+            !src-tauri/gen/android/**/build-cache/**
+          if-no-files-found: error
